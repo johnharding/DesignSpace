@@ -25,30 +25,29 @@ namespace DesignSpace
 
         protected override void RegisterInputParams(GH_Component.GH_InputParamManager pm)
         {
-            pm.AddBooleanParameter("Go", "G", "Set to true to run through solutions", GH_ParamAccess.item, false);
-            pm.AddNumberParameter("Sliders", "S", "Put numeric variables (sliders) in here", GH_ParamAccess.list);
+            pm.AddNumberParameter("Sliders", "S", "Connect parameters (genotype) here", GH_ParamAccess.list);
+            pm.AddGeometryParameter("Geometry", "G", "Connect geometry (phenotype) here", GH_ParamAccess.list);
 
+            pm[0].WireDisplay = GH_ParamWireDisplay.faint;
             pm[1].WireDisplay = GH_ParamWireDisplay.faint;
+
+            pm[1].Optional = true;
         }
 
         protected override void RegisterOutputParams(GH_Component.GH_OutputParamManager pm)
         {
+            pm.AddBooleanParameter("Soup", "Soup", "here there be soup dragons", GH_ParamAccess.item);
         }
 
         protected override void SolveInstance(IGH_DataAccess DA)
         {
-           
-
             // If we are currently static, then reset things and collect sliders
             if (!GO)
             {
                 counter = 0;
                 sliders.Clear();
-
-                // Default value is false anyway remember
-                DA.GetData("Go", ref GO);
                 
-                foreach (IGH_Param param in this.Params.Input[1].Sources)
+                foreach (IGH_Param param in this.Params.Input[0].Sources)
                 {
                     Grasshopper.Kernel.Special.GH_NumberSlider slider = param as Grasshopper.Kernel.Special.GH_NumberSlider;
                     if (slider != null)
@@ -63,19 +62,35 @@ namespace DesignSpace
                 // Test to see if we can change the slider to 9
                 sliders[0].Slider.Value = (decimal)counter;
 
-                // Iterate the master counter
+
+                // First things first...
+                if(counter==0)
+                {
+
+
+                }
+
+                // Now iterate the master counter
                 counter++;
 
                 // If we reach a limit, then stop
                 if (counter == 5)
                 {
                     GO = false;
+                    
+                    // Reset the counter
+                    counter = 0;
 
-                    //expire this component
-                    this.ExpireSolution(true);
+                    // Expire this component
+                    // this.ExpireSolution(true);
                 }
 
             }
+
+            DesignSpaceWindow myMainWindow = new DesignSpaceWindow();
+            myMainWindow.Show();
+
+            DA.SetData(0, GO);
 
            
         }
@@ -105,7 +120,7 @@ namespace DesignSpace
         {
             get
             {
-                return Properties.Resources.DesignSpaceIcon;
+                return Properties.Resources.DoubleClickIcon;
             }
         }
     }

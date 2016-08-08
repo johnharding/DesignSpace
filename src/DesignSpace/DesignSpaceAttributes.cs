@@ -34,14 +34,13 @@ namespace DesignSpace
         {
             if ((ContentBox.Contains(e.CanvasLocation)))
             {
-                //CurrentOwner.SOLVE = true;
+                // Best to flip this to iron out any errors
+                MyOwner.GO = !MyOwner.GO;
 
-                // hit the export straight away, where we handle the folder selection! 
-                //CurrentOwner.Export();
-                //CurrentOwner.ExpireSolution(true);
+                MyOwner.ExpireSolution(true);
 
-                //MyOwner.GO = true;
-                System.Media.SystemSounds.Beep.Play();
+
+                
 
                 return GH_ObjectResponse.Handled;
             }

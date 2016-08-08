@@ -63,9 +63,9 @@ namespace DesignSpace.Properties {
         /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Bitmap.
         /// </summary>
-        internal static System.Drawing.Bitmap DesignSpaceIcon {
+        internal static System.Drawing.Bitmap DoubleClickIcon {
             get {
-                object obj = ResourceManager.GetObject("DesignSpaceIcon", resourceCulture);
+                object obj = ResourceManager.GetObject("DoubleClickIcon", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
             }
         }
