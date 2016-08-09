@@ -14,6 +14,7 @@ using System.Windows.Navigation;
 using System.Windows.Shapes;
 using HelixToolkit.Wpf;
 using System.Windows.Media.Media3D;
+using Grasshopper.Kernel.Types;
 
 namespace DesignSpace
 {
@@ -37,6 +38,10 @@ namespace DesignSpace
             //hVp3D.FitView(new System.Windows.Media.Media3D.Vector3D(0,0,1), )
             //hVp3D.Arrange(new Rect(200, 200, 300, 300));
             //hVp3D.Width = 200;
+
+            hVp3D.ShowFrameRate = true;
+            hVp3D.ViewCubeOpacity = 0.5;
+
             var lights = new DefaultLights();
             var teaPot = new Teapot();
             hVp3D.Children.Add(lights);

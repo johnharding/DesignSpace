@@ -5,6 +5,7 @@
         Title="DesignSpace" Height="720" Width="1280"
         xmlns:myControls="clr-namespace:DesignSpace"
         >
+    <!--
     <Grid>
         <myControls:UserControl1 Margin="10,10,847,338"></myControls:UserControl1>
         <myControls:UserControl1 Margin="425,10,434,338"></myControls:UserControl1>
@@ -13,5 +14,6 @@
         <myControls:UserControl1 Margin="425,348,434,10"/>
         <myControls:UserControl1 Margin="838,348,0,10"/>
     </Grid>
+    -->
    
 </Window>
