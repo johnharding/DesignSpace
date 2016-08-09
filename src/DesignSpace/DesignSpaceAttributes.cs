@@ -37,10 +37,7 @@ namespace DesignSpace
                 // Best to flip this to iron out any errors
                 MyOwner.GO = !MyOwner.GO;
 
-                MyOwner.ExpireSolution(true);
-
-
-                
+                MyOwner.ExpireSolution(true);  
 
                 return GH_ObjectResponse.Handled;
             }
@@ -69,52 +66,44 @@ namespace DesignSpace
                 //graphics.DrawLine(Pens.Black, 0, 0, -100000, 0);
                 //graphics.FillEllipse(Brushes.Black, -2, -2, 4, 4);
 
-                //Font ubuntuFont = new Font("ubuntu", 8);
-                //StringFormat format = new StringFormat();
-                //format.Alignment = StringAlignment.Near;
-                //format.LineAlignment = StringAlignment.Center;
-                //format.Trimming = StringTrimming.EllipsisCharacter;
+                Font ubuntuFont = new Font("ubuntu", 8);
+                StringFormat format = new StringFormat();
+                format.Alignment = StringAlignment.Near;
+                format.LineAlignment = StringAlignment.Center;
+                format.Trimming = StringTrimming.EllipsisCharacter;
 
-                //graphics.DrawString("Child", ubuntuFont, Brushes.Black, 10,-20, format);
-                //graphics.DrawString("Parent", ubuntuFont, Brushes.Black, 10, 20, format);
-                //graphics.DrawString("Ingredients", ubuntuFont, Brushes.Black, -80, 20, format);
+                graphics.DrawString("" + MyOwner.GO.ToString(), ubuntuFont, Brushes.Black, (int)Bounds.Location.X, (int)Bounds.Location.Y - 8, format);
 
-                /*
-                GH_Palette palette = GH_Palette.Pink;
+                //GH_Palette palette = GH_Palette.Pink;
 
-                Color myColor = Color.LightGray;
-
+                //Color myColor = Color.LightGray;
                 
-                switch (Owner.RuntimeMessageLevel)
-                {
-                    case GH_RuntimeMessageLevel.Warning:
-                        myColor = Color.Orange;
-                        break;
+                //switch (Owner.RuntimeMessageLevel)
+                //{
+                //    case GH_RuntimeMessageLevel.Warning:
+                //        myColor = Color.Orange;
+                //        break;
 
-                    case GH_RuntimeMessageLevel.Error:
-                        myColor = Color.Red;
-                        break;
-                }
+                //    case GH_RuntimeMessageLevel.Error:
+                //        myColor = Color.Red;
+                //        break;
+                //}
                  
+                //if (Owner.Hidden) myColor = Color.Gray;
+                //if (Owner.Locked) myColor = Color.DarkGray;
 
-                if (Owner.Hidden) myColor = Color.Gray;
-                if (Owner.Locked) myColor = Color.DarkGray;
+                //Rectangle myRect = new Rectangle((int)Bounds.Location.X, (int)Bounds.Location.Y-20, (int)Bounds.Size.Width, 10);
+                //Pen myPen = new Pen(Brushes.Black, 1);
+                //graphics.DrawRectangle(myPen, myRect);
+                //GH_Capsule capsule = GH_Capsule.CreateCapsule(myRect, palette, 10, 0);
 
-                RectangleF myRect = new RectangleF(Bounds.Location, Bounds.Size);
-                GH_Capsule capsule = GH_Capsule.CreateCapsule(myRect, palette, 10, 0);
-
-                capsule.Render(graphics, myColor);
-                capsule.Dispose();
-                capsule = null;
-
-                base.RenderComponentCapsule(canvas, graphics, false, false, false, true, true, false);
-
-                
-
-                PointF iconLocation = new PointF(ContentBox.X-4, ContentBox.Y+70);
-                graphics.DrawImage(Owner.Icon_24x24, iconLocation);
-                */
-
+                //capsule.Render(graphics, myColor);
+                //capsule.Dispose();
+                //capsule = null;
+                //base.RenderComponentCapsule(canvas, graphics, false, false, false, true, true, false);
+                //PointF iconLocation = new PointF(ContentBox.X-4, ContentBox.Y+70);
+                //graphics.DrawImage(Owner.Icon_24x24, iconLocation);
+                //
                 //format.Dispose();
 
             }

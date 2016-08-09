@@ -14,31 +14,50 @@ namespace DesignSpace
 {
     public class DesignSpaceComponent : GH_Component
     {
+        private DesignSpaceWindow myMainWindow;
         public bool GO = false;
         private List<Grasshopper.Kernel.Special.GH_NumberSlider> sliders = new List<Grasshopper.Kernel.Special.GH_NumberSlider>();
         int counter;
 
+        /// <summary>
+        /// Main constructor
+        /// </summary>
         public DesignSpaceComponent() 
-            : base("DesignSpace", "DS", "Generates new grasshopper networks automatically", "Extra", "Default")
-        {
+            : base("DesignSpace", "DS", "Generates new grasshopper networks automatically", "Extra", "Rosebud")
+        {   
         }
 
+        /// <summary>
+        /// Register inputs
+        /// </summary>
+        /// <param name="pm"></param>
         protected override void RegisterInputParams(GH_Component.GH_InputParamManager pm)
         {
-            pm.AddNumberParameter("Sliders", "S", "Connect parameters (genotype) here", GH_ParamAccess.list);
-            pm.AddGeometryParameter("Geometry", "G", "Connect geometry (phenotype) here", GH_ParamAccess.list);
+            pm.AddNumberParameter("Sliders", "S", "(genotype) Connect sliders here", GH_ParamAccess.list);
+            pm.AddGeometryParameter("Volatile Geometry", "vG", "(phenotype) Connect geometry that is dependent on sliders here", GH_ParamAccess.list);
+            pm.AddGeometryParameter("Persistent Geometry", "pG", "(phenotype) Connect geometry that is independent of sliders here (e.g. site context)", GH_ParamAccess.list);
 
             pm[0].WireDisplay = GH_ParamWireDisplay.faint;
             pm[1].WireDisplay = GH_ParamWireDisplay.faint;
+            pm[2].WireDisplay = GH_ParamWireDisplay.faint;
 
             pm[1].Optional = true;
+            pm[2].Optional = true;
         }
 
+        /// <summary>
+        /// Register outputs
+        /// </summary>
+        /// <param name="pm"></param>
         protected override void RegisterOutputParams(GH_Component.GH_OutputParamManager pm)
         {
-            pm.AddBooleanParameter("Soup", "Soup", "here there be soup dragons", GH_ParamAccess.item);
+            pm.AddNumberParameter("ChosenOnes", "Ch", "Each list contains a collection of selected parameters", GH_ParamAccess.tree);
         }
 
+        /// <summary>
+        /// Grasshopper solve method
+        /// </summary>
+        /// <param name="DA"></param>
         protected override void SolveInstance(IGH_DataAccess DA)
         {
             // If we are currently static, then reset things and collect sliders
@@ -46,6 +65,7 @@ namespace DesignSpace
             {
                 counter = 0;
                 sliders.Clear();
+                myMainWindow = new DesignSpaceWindow();
                 
                 foreach (IGH_Param param in this.Params.Input[0].Sources)
                 {
@@ -66,8 +86,7 @@ namespace DesignSpace
                 // First things first...
                 if(counter==0)
                 {
-
-
+                    
                 }
 
                 // Now iterate the master counter
@@ -80,19 +99,15 @@ namespace DesignSpace
                     
                     // Reset the counter
                     counter = 0;
+                    myMainWindow.Show();
 
                     // Expire this component
                     // this.ExpireSolution(true);
                 }
 
             }
-
-            DesignSpaceWindow myMainWindow = new DesignSpaceWindow();
-            myMainWindow.Show();
-
             DA.SetData(0, GO);
 
-           
         }
 
 
