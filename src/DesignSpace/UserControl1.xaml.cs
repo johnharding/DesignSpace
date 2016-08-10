@@ -15,6 +15,7 @@ using System.Windows.Shapes;
 using HelixToolkit.Wpf;
 using System.Windows.Media.Media3D;
 using Grasshopper.Kernel.Types;
+using Rhino.Geometry;
 
 namespace DesignSpace
 {
@@ -23,24 +24,32 @@ namespace DesignSpace
     /// </summary>
     public partial class UserControl1 : UserControl
     {
-        public UserControl1()
+        /// <summary>
+        /// Main contructor
+        /// TODO: Needs to have GH_Mesh as argument
+        /// </summary>
+        public UserControl1(Mesh myRhinoMesh)
         {
             InitializeComponent();
-            Create3DViewPort();
+            Create3DViewPort(myRhinoMesh);
         }
 
         /// <summary>
         /// Create the 3d viewport
         /// </summary>
-        private void Create3DViewPort()
+        private void Create3DViewPort(Mesh myRhinoMesh)
         {
             var hVp3D = new HelixViewport3D();
-            //hVp3D.FitView(new System.Windows.Media.Media3D.Vector3D(0,0,1), )
-            //hVp3D.Arrange(new Rect(200, 200, 300, 300));
-            //hVp3D.Width = 200;
+            hVp3D.Background = Brushes.DarkGray;
 
             hVp3D.ShowFrameRate = true;
-            hVp3D.ViewCubeOpacity = 0.5;
+            hVp3D.ViewCubeOpacity = 0.2;
+            hVp3D.ViewCubeTopText = "T";
+            hVp3D.ViewCubeFrontText = "F";
+            hVp3D.ViewCubeRightText= "R";
+            hVp3D.ViewCubeBottomText = "";
+            hVp3D.ViewCubeLeftText = "";
+            hVp3D.ViewCubeBackText = "";
 
             var lights = new DefaultLights();
             var teaPot = new Teapot();
@@ -55,29 +64,41 @@ namespace DesignSpace
 
             MeshGeometry3D myMesh = new MeshGeometry3D();
             Point3DCollection myPoints = new Point3DCollection();
-            myPoints.Add(new Point3D(20,20,20));
-            myPoints.Add(new Point3D(120,120,20));
-            myPoints.Add(new Point3D(20,20,120));
-            myMesh.Positions = myPoints;
 
-            myMesh.TriangleIndices.Add(0);
-            myMesh.TriangleIndices.Add(1);
-            myMesh.TriangleIndices.Add(2);
+            if (myRhinoMesh != null)
+            {
+                for (int i = 0; i < myRhinoMesh.Vertices.Count; i++)
+                {
+                    myPoints.Add(new Point3D(myRhinoMesh.Vertices[i].X, myRhinoMesh.Vertices[i].Y, myRhinoMesh.Vertices[i].Z));
+                }
+
+                myMesh.Positions = myPoints;
+
+
+                for (int i = 0; i < myRhinoMesh.Faces.Count; i++)
+                {
+                    myMesh.TriangleIndices.Add(myRhinoMesh.Faces[i].A);
+                    myMesh.TriangleIndices.Add(myRhinoMesh.Faces[i].B);
+                    myMesh.TriangleIndices.Add(myRhinoMesh.Faces[i].C);
+                }
+            }
 
             // Define material that will use the gradient.
-            //DiffuseMaterial myDiffuseMaterial = new DiffuseMaterial(Brushes.Black);
-
+            // DiffuseMaterial myDiffuseMaterial = new DiffuseMaterial(Brushes.Black);
             // Add this gradient to a MaterialGroup.
-            //MaterialGroup myMaterialGroup = new MaterialGroup();
-            //myMaterialGroup.Children.Add(myDiffuseMaterial);
+            // MaterialGroup myMaterialGroup = new MaterialGroup();
+            // myMaterialGroup.Children.Add(myDiffuseMaterial);
 
-            DiffuseMaterial wireframe_material = new DiffuseMaterial(Brushes.Red);
+            DiffuseMaterial wireframe_material = new DiffuseMaterial(Brushes.White);
             GeometryModel3D WireframeModel = new GeometryModel3D(myMesh, wireframe_material);
 
             ModelVisual3D monkey = new ModelVisual3D();
             monkey.Content = WireframeModel;
 
             hVp3D.Children.Add(monkey);
+
+            hVp3D.ZoomExtents();
+
 
             //hVp3D.IsEnabled = false;
 

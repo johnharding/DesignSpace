@@ -1,4 +1,5 @@
 ﻿using HelixToolkit.Wpf;
+using Rhino.Geometry;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -20,53 +21,83 @@ namespace DesignSpace
     /// </summary>
     public partial class DesignSpaceWindow : Window
     {
-        public DesignSpaceWindow()
-        {
-            this.InitializeComponent();
-            
-            UserControl1 myControl1 = new UserControl1();
-            UserControl1 myControl2 = new UserControl1();
-            UserControl1 myControl3 = new UserControl1();
+        Grid myGrid;
+        List<UserControl1> myUserControls = new List<UserControl1>();
 
+        public DesignSpaceWindow(List<Mesh> myMeshes)
+        {
+            
+            this.InitializeComponent();
+
+
+
+            if(myMeshes!=null)
+            {
+                for (int i = 0; i < myMeshes.Count; i++)
+                {
+                    myUserControls.Add(new UserControl1(myMeshes[i]));
+                }
+            }
+
+
+            
             // Create the Grid
-            Grid myGrid = new Grid();
-            myGrid.Width = 1000;
-            myGrid.Height = 600;
+            myGrid = new Grid();
+            MakeGrid(4, 3);
+
+
+            // Add the user controls
+            for(int i=0; i<myUserControls.Count; i++)
+            {
+                Grid.SetColumn(myUserControls[i], i%4);
+                Grid.SetRow(myUserControls[i], (int)(i/4));
+
+                //Grid.SetColumn(myControl2, 2);
+                //Grid.SetRow(myControl2, 2);
+
+                myGrid.Children.Add(myUserControls[i]);
+            }
+            
+
+            this.AddChild(myGrid);
+        }
+
+
+        void MakeGrid(int sizeX, int sizeY)
+        {
+            myGrid.Width = 1270;
+            myGrid.Height = 684;
             myGrid.HorizontalAlignment = HorizontalAlignment.Left;
             myGrid.VerticalAlignment = VerticalAlignment.Top;
             myGrid.ShowGridLines = true;
 
+            Thickness myThickness = new Thickness();
+            myThickness.Bottom = 2;
+            myThickness.Left = 2;
+            myThickness.Right = 2;
+            myThickness.Top = 2;
+            this.BorderThickness = myThickness;
+            // Border myBorder = new Border();
+            // myBorder.BorderThickness
+
+
             // Define the Columns
-            ColumnDefinition colDef1 = new ColumnDefinition();
-            ColumnDefinition colDef2 = new ColumnDefinition();
-            ColumnDefinition colDef3 = new ColumnDefinition();
-            myGrid.ColumnDefinitions.Add(colDef1);
-            myGrid.ColumnDefinitions.Add(colDef2);
-            myGrid.ColumnDefinitions.Add(colDef3);
+            int COLNUM = 4;
+            List<ColumnDefinition> myCols = new List<ColumnDefinition>();
+            for (int i = 0; i < COLNUM; i++)
+                myCols.Add(new ColumnDefinition());
+
+            for (int i = 0; i < COLNUM; i++)
+                myGrid.ColumnDefinitions.Add(myCols[i]);
 
             // Define the Rows
-            RowDefinition rowDef1 = new RowDefinition();
-            RowDefinition rowDef2 = new RowDefinition();
-            RowDefinition rowDef3 = new RowDefinition();
-            RowDefinition rowDef4 = new RowDefinition();
-            myGrid.RowDefinitions.Add(rowDef1);
-            myGrid.RowDefinitions.Add(rowDef2);
-            myGrid.RowDefinitions.Add(rowDef3);
-            myGrid.RowDefinitions.Add(rowDef4);
+            int ROWNUM = 3;
+            List<RowDefinition> myRows = new List<RowDefinition>();
+            for (int i = 0; i < ROWNUM; i++)
+                myRows.Add(new RowDefinition());
 
-
-            Grid.SetColumn(myControl1, 1);
-            Grid.SetRow(myControl1, 1);
-
-            Grid.SetColumn(myControl2, 2);
-            Grid.SetRow(myControl2, 2);
-
-            myGrid.Children.Add(myControl1);
-            myGrid.Children.Add(myControl2);
-            //myGrid.Children.Add(myControl3);
-
-
-            this.AddChild(myGrid);
+            for (int i = 0; i < ROWNUM; i++)
+                myGrid.RowDefinitions.Add(myRows[i]);
         }
 
 
