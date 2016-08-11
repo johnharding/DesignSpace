@@ -84,6 +84,7 @@
     </Compile>
     <Compile Include="DesignSpaceAttributes.cs" />
     <Compile Include="DesignSpaceComponent.cs" />
+    <Compile Include="GridLines.cs" />
     <Compile Include="UserControl1.xaml.cs">
       <DependentUpon>UserControl1.xaml</DependentUpon>
     </Compile>

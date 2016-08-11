@@ -72,7 +72,7 @@ namespace DesignSpace
                 format.LineAlignment = StringAlignment.Center;
                 format.Trimming = StringTrimming.EllipsisCharacter;
 
-                graphics.DrawString("" + MyOwner.GO.ToString(), ubuntuFont, Brushes.Black, (int)Bounds.Location.X, (int)Bounds.Location.Y - 8, format);
+                graphics.DrawString(MyOwner.sliderValues.Count + " designs", ubuntuFont, Brushes.Black, (int)Bounds.Location.X, (int)Bounds.Location.Y - 8, format);
 
                 //GH_Palette palette = GH_Palette.Pink;
 

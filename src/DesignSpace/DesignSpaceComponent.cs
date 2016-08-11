@@ -20,7 +20,7 @@ namespace DesignSpace
         public bool GO = false;
         int counter;
         private List<Grasshopper.Kernel.Special.GH_NumberSlider> sliders = new List<Grasshopper.Kernel.Special.GH_NumberSlider>();
-        private List<double> sliderValues = new List<double>();
+        public List<double> sliderValues = new List<double>();
         private List<object> persGeo = new List<object>();
 
 
@@ -84,6 +84,7 @@ namespace DesignSpace
 
                 // Now set the value list
                 // TODO: Replace with a tree, not just the first slider!
+                // Thanks to Dimitrie A. Stefanescu for making Speckle open which has helped greatly here.
                 if (sliders != null)
                 {
                     if (sliders[0].Slider.Type == Grasshopper.GUI.Base.GH_SliderAccuracy.Integer)
@@ -91,24 +92,23 @@ namespace DesignSpace
                         int min = (int)sliders[0].Slider.Minimum;
                         int max = (int)sliders[0].Slider.Maximum;
 
+                        //double increment = (max - min) / 11;
+
                         for (int j = min; j <= max; j++)
                         {
-                            sliderValues.Add((double)Math.Round((double)j, 0));
+                            sliderValues.Add(j);
                         }
                     }
 
                     else if (sliders[0].Slider.Type == Grasshopper.GUI.Base.GH_SliderAccuracy.Float)
                     {
-                        double min, max;
+                        double min = (double)sliders[0].Slider.Minimum;
+                        double max = (double)sliders[0].Slider.Maximum;
 
-                        min = (double)slider.Slider.Minimum;
-                        max = (double)slider.Slider.Maximum;
-
-                        double absRange = max - min;
-                        double increment = absRange / (MAXVALUES - 1);
+                        double increment = (max - min) / 11;
 
                         for (double j = min; j <= max; j += increment)
-                            mySliderValues.Add((double)Convert.ToDouble(Convert.ToString(Math.Round(j, 2)))); //really, really, really stupid
+                            sliderValues.Add(Math.Round(j, 2));
 
                     }
                 }
@@ -122,8 +122,8 @@ namespace DesignSpace
             {
                 // Get the slider values.
                 // TODO: Include more than one slider.
-                if(counter<5)
-                    sliders[0].Slider.Value = (decimal)counter;
+                if(counter<sliderValues.Count)
+                    sliders[0].Slider.Value = (decimal)sliderValues[counter];
 
 
                 // First things first...
@@ -160,16 +160,13 @@ namespace DesignSpace
 
 
                 // If we reach a limit, then stop and launch the window
-                if (counter == 5)
+                if (counter == sliderValues.Count)
                 {
                     GO = false;
 
                     // Instantiate the window and export the geometry to WPF3D
                     myMainWindow = new DesignSpaceWindow(GetPersMeshList());
                     myMainWindow.Show();
-
-                    // Reset the counter
-                    counter = 0;
 
                     // Expire this component
                     this.ExpireSolution(true);
@@ -231,5 +228,24 @@ namespace DesignSpace
                 return Properties.Resources.DoubleClickIcon;
             }
         }
+
+        protected override void AppendAdditionalComponentMenuItems(System.Windows.Forms.ToolStripDropDown menu)
+        {
+            base.AppendAdditionalComponentMenuItems(menu);
+            Menu_AppendItem(menu, @"github source", gotoGithub);
+            //Menu_AppendItem(menu, @"gh group page", gotoGrasshopperGroup);
+
+        }
+
+        private void gotoGithub(Object sender, EventArgs e)
+        {
+            System.Diagnostics.Process.Start(@"https://github.com/johnharding/DesignSpace");
+        }
+
+        //TODO: send to grasshopper group
+        //private void gotoGrasshopperGroup(Object sender, EventArgs e)
+        //{
+            //System.Diagnostics.Process.Start(@"http://www.????");
+        //}
     }
 }

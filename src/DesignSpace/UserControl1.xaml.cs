@@ -40,7 +40,7 @@ namespace DesignSpace
         private void Create3DViewPort(Mesh myRhinoMesh)
         {
             var hVp3D = new HelixViewport3D();
-            hVp3D.Background = Brushes.DarkGray;
+            hVp3D.Background = Brushes.LightGray;
 
             hVp3D.ShowFrameRate = true;
             hVp3D.ViewCubeOpacity = 0.2;
@@ -74,7 +74,6 @@ namespace DesignSpace
 
                 myMesh.Positions = myPoints;
 
-
                 for (int i = 0; i < myRhinoMesh.Faces.Count; i++)
                 {
                     myMesh.TriangleIndices.Add(myRhinoMesh.Faces[i].A);
@@ -89,23 +88,37 @@ namespace DesignSpace
             // MaterialGroup myMaterialGroup = new MaterialGroup();
             // myMaterialGroup.Children.Add(myDiffuseMaterial);
 
-            DiffuseMaterial wireframe_material = new DiffuseMaterial(Brushes.White);
+            DiffuseMaterial wireframe_material = new DiffuseMaterial(Brushes.Yellow);
             GeometryModel3D WireframeModel = new GeometryModel3D(myMesh, wireframe_material);
-
+            
             ModelVisual3D monkey = new ModelVisual3D();
             monkey.Content = WireframeModel;
 
+            // TODO: Figure out a way to define a grid
+            // GridLines fishsticks = new GridLines();
+            // hVp3D.Children.Add(fishsticks);
+
             hVp3D.Children.Add(monkey);
-
-            hVp3D.ZoomExtents();
-
+            hVp3D.ZoomExtentsWhenLoaded = true;
 
             //hVp3D.IsEnabled = false;
+
+
 
             this.AddChild(hVp3D);
 
 
             
         }
+
+
+
+
+
+
+
+        
+            
+        
     }
 }
