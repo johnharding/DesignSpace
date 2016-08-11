@@ -45,10 +45,10 @@ namespace DesignSpace
             hVp3D.ShowFrameRate = true;
             hVp3D.ViewCubeOpacity = 0.2;
             hVp3D.ViewCubeTopText = "T";
-            hVp3D.ViewCubeFrontText = "F";
-            hVp3D.ViewCubeRightText= "R";
+            hVp3D.ViewCubeFrontText = "R";
+            hVp3D.ViewCubeRightText= "";
             hVp3D.ViewCubeBottomText = "";
-            hVp3D.ViewCubeLeftText = "";
+            hVp3D.ViewCubeLeftText = "F";
             hVp3D.ViewCubeBackText = "";
 
             var lights = new DefaultLights();

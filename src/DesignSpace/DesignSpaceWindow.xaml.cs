@@ -22,14 +22,14 @@ namespace DesignSpace
     public partial class DesignSpaceWindow : Window
     {
         Grid myGrid;
-        List<UserControl1> myUserControls = new List<UserControl1>();
+        List<UserControl1> myUserControls;
 
         public DesignSpaceWindow(List<Mesh> myMeshes)
         {
             
             this.InitializeComponent();
 
-
+            myUserControls = new List<UserControl1>();
 
             if(myMeshes!=null)
             {

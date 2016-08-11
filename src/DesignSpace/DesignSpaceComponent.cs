@@ -19,7 +19,6 @@ namespace DesignSpace
         private DesignSpaceWindow myMainWindow;
         public bool GO = false;
         int counter;
-
         private List<Grasshopper.Kernel.Special.GH_NumberSlider> sliders = new List<Grasshopper.Kernel.Special.GH_NumberSlider>();
         private List<object> persGeo = new List<object>();
 
@@ -28,7 +27,7 @@ namespace DesignSpace
         /// Main constructor
         /// </summary>
         public DesignSpaceComponent() 
-            : base("DesignSpace", "DS", "Generates new grasshopper networks automatically", "Extra", "Rosebud")
+            : base("DesignSpace", "DS", "Displays multiple parameter instances in one place", "Extra", "Rosebud")
         {   
         }
 
@@ -39,15 +38,13 @@ namespace DesignSpace
         protected override void RegisterInputParams(GH_Component.GH_InputParamManager pm)
         {
             pm.AddNumberParameter("Sliders", "S", "(genotype) Connect sliders here", GH_ParamAccess.list);
-            pm.AddGeometryParameter("Volatile Geometry", "vG", "(phenotype) Connect geometry that is dependent on sliders here", GH_ParamAccess.item);
-            pm.AddGeometryParameter("Persistent Geometry", "pG", "(phenotype) Connect geometry that is independent of sliders here (e.g. site context)", GH_ParamAccess.item);
+            //pm.AddGeometryParameter("Volatile Geometry", "vG", "(phenotype) Connect geometry that is dependent on sliders here", GH_ParamAccess.item);
+            pm.AddGeometryParameter("Geometry", "G", "(phenotype) Connect geometry here - currently only meshes", GH_ParamAccess.list);
 
             pm[0].WireDisplay = GH_ParamWireDisplay.faint;
             pm[1].WireDisplay = GH_ParamWireDisplay.faint;
-            pm[2].WireDisplay = GH_ParamWireDisplay.faint;
-
             pm[1].Optional = true;
-            pm[2].Optional = true;
+
         }
 
         /// <summary>
@@ -71,7 +68,7 @@ namespace DesignSpace
                 // Clear the crap out
                 counter = 0;
                 sliders.Clear();
-                persGeo.Clear();
+                persGeo.Clear(); //Why isn't this working!?
 
                 
                 
@@ -89,9 +86,11 @@ namespace DesignSpace
 
             }
 
+            // So if GO = true...
             else
             {
-                // We need one more calculaion after the slider has updated later.
+                // Get the slider values.
+                // TODO: Include more than one slider.
                 if(counter<5)
                     sliders[0].Slider.Value = (decimal)counter;
 
@@ -106,9 +105,26 @@ namespace DesignSpace
                 else
                 { 
                     // Collect the object at the current instance
-                    object localObj = null;
-                    DA.GetData("Persistent Geometry", ref localObj);
-                    persGeo.Add(localObj);
+                    List<object> localObjs = new List<object>();
+                    DA.GetDataList("Geometry", localObjs);
+                    
+                    // Currently we only take meshes
+                    Mesh joinedMesh = new Mesh();
+
+                    for(int i=0; i<localObjs.Count; i++)
+                    {
+                        if (localObjs[i] is GH_Mesh)
+                        {
+                            GH_Mesh myGHMesh = new GH_Mesh();
+                            myGHMesh = (GH_Mesh)localObjs[i];
+                            Mesh myLocalMesh = new Mesh();
+                            GH_Convert.ToMesh(myGHMesh, ref myLocalMesh, GH_Conversion.Primary);
+                            myLocalMesh.Faces.ConvertQuadsToTriangles();
+                            joinedMesh.Append(myLocalMesh);
+                        }
+                    }
+
+                    persGeo.Add(joinedMesh);
                 }   
 
 
@@ -125,7 +141,7 @@ namespace DesignSpace
                     counter = 0;
 
                     // Expire this component
-                    // this.ExpireSolution(true);
+                    this.ExpireSolution(true);
                 }
 
                 // NOW iterate the master counter
@@ -143,17 +159,13 @@ namespace DesignSpace
         /// </summary>
         /// <returns></returns>
         public List<Mesh>GetPersMeshList()
-        {
-            
+        {           
             List<Mesh> myMeshes = new List<Mesh>();
             foreach (object myObject in persGeo)
             {
-                if (myObject is GH_Mesh)
+                if (myObject is Mesh)
                 {
-                    GH_Mesh myGHMesh = new GH_Mesh();
-                    myGHMesh = (GH_Mesh)myObject;
-                    Mesh myLocalMesh = new Mesh();
-                    GH_Convert.ToMesh(myGHMesh, ref myLocalMesh, GH_Conversion.Primary);
+                    Mesh myLocalMesh = (Mesh)myObject;
                     myMeshes.Add(myLocalMesh);
                 }
             }
