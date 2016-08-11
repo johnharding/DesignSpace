@@ -20,6 +20,7 @@ namespace DesignSpace
         public bool GO = false;
         int counter;
         private List<Grasshopper.Kernel.Special.GH_NumberSlider> sliders = new List<Grasshopper.Kernel.Special.GH_NumberSlider>();
+        private List<double> sliderValues = new List<double>();
         private List<object> persGeo = new List<object>();
 
 
@@ -65,23 +66,53 @@ namespace DesignSpace
             // If we are currently static, then reset things and collect sliders
             if (!GO)
             {
-                // Clear the crap out
+                // Spring clean
                 counter = 0;
                 sliders.Clear();
-                persGeo.Clear(); //Why isn't this working!?
+                persGeo.Clear();
+                sliderValues.Clear();
 
-                
-                
+                // Collect the sliders up (just one at the moment)
                 foreach (IGH_Param param in this.Params.Input[0].Sources)
                 {
                     Grasshopper.Kernel.Special.GH_NumberSlider slider = param as Grasshopper.Kernel.Special.GH_NumberSlider;
                     if (slider != null)
                     {
                         sliders.Add(slider);
+                    } 
+                }
+
+                // Now set the value list
+                // TODO: Replace with a tree, not just the first slider!
+                if (sliders != null)
+                {
+                    if (sliders[0].Slider.Type == Grasshopper.GUI.Base.GH_SliderAccuracy.Integer)
+                    {
+                        int min = (int)sliders[0].Slider.Minimum;
+                        int max = (int)sliders[0].Slider.Maximum;
+
+                        for (int j = min; j <= max; j++)
+                        {
+                            sliderValues.Add((double)Math.Round((double)j, 0));
+                        }
                     }
 
-                    
+                    else if (sliders[0].Slider.Type == Grasshopper.GUI.Base.GH_SliderAccuracy.Float)
+                    {
+                        double min, max;
+
+                        min = (double)slider.Slider.Minimum;
+                        max = (double)slider.Slider.Maximum;
+
+                        double absRange = max - min;
+                        double increment = absRange / (MAXVALUES - 1);
+
+                        for (double j = min; j <= max; j += increment)
+                            mySliderValues.Add((double)Convert.ToDouble(Convert.ToString(Math.Round(j, 2)))); //really, really, really stupid
+
+                    }
                 }
+
 
 
             }
