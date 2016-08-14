@@ -54,7 +54,6 @@ namespace DesignSpace
             var lights = new DefaultLights();
             var teaPot = new Teapot();
             hVp3D.Children.Add(lights);
-            //hVp3D.Children.Add(teaPot);
 
             /*
              * Whenever you can, use Visual3D objects for unique instances of objects within your scene. 
@@ -62,8 +61,11 @@ namespace DesignSpace
              * For example, use a Model3Dobject to build a model of a car; and use ten ModelVisual3D objects to place ten cars in your scene.
              */
 
+            //List<int> indexList = new List<int>();
             MeshGeometry3D myMesh = new MeshGeometry3D();
+            //Mesh3D myMesh3d;
             Point3DCollection myPoints = new Point3DCollection();
+
 
             if (myRhinoMesh != null)
             {
@@ -79,8 +81,16 @@ namespace DesignSpace
                     myMesh.TriangleIndices.Add(myRhinoMesh.Faces[i].A);
                     myMesh.TriangleIndices.Add(myRhinoMesh.Faces[i].B);
                     myMesh.TriangleIndices.Add(myRhinoMesh.Faces[i].C);
+
+                    //indexList.Add(myRhinoMesh.Faces[i].A);
+                    //indexList.Add(myRhinoMesh.Faces[i].B);
+                    //indexList.Add(myRhinoMesh.Faces[i].C);
                 }
+
+                //myMesh3d = new Mesh3D(myPoints, indexList);
             }
+
+            //PipeVisual3D myPipe = new PipeVisual3D();
 
             // Define material that will use the gradient.
             // DiffuseMaterial myDiffuseMaterial = new DiffuseMaterial(Brushes.Black);
@@ -90,35 +100,19 @@ namespace DesignSpace
 
             DiffuseMaterial wireframe_material = new DiffuseMaterial(Brushes.Yellow);
             GeometryModel3D WireframeModel = new GeometryModel3D(myMesh, wireframe_material);
-            
             ModelVisual3D monkey = new ModelVisual3D();
             monkey.Content = WireframeModel;
 
             // TODO: Figure out a way to define a grid
             // GridLines fishsticks = new GridLines();
-            // hVp3D.Children.Add(fishsticks);
 
             hVp3D.Children.Add(monkey);
             hVp3D.ZoomExtentsWhenLoaded = true;
 
             //hVp3D.IsEnabled = false;
 
-
-
             this.AddChild(hVp3D);
-
-
-            
-        }
-
-
-
-
-
-
-
-        
-            
-        
+     
+        }      
     }
 }

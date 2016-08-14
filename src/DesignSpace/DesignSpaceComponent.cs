@@ -18,11 +18,11 @@ namespace DesignSpace
 
         private DesignSpaceWindow myMainWindow;
         public bool GO = false;
-        int counter;
+        private int counter;
+        private int popSize;
         private List<Grasshopper.Kernel.Special.GH_NumberSlider> sliders = new List<Grasshopper.Kernel.Special.GH_NumberSlider>();
         public List<double> sliderValues = new List<double>();
         private List<object> persGeo = new List<object>();
-
 
         /// <summary>
         /// Main constructor
@@ -38,13 +38,14 @@ namespace DesignSpace
         /// <param name="pm"></param>
         protected override void RegisterInputParams(GH_Component.GH_InputParamManager pm)
         {
-            pm.AddNumberParameter("Sliders", "S", "(genotype) Connect sliders here", GH_ParamAccess.list);
+            pm.AddNumberParameter("Sliders", "S", "(genotype) Connect slider here (currently only one)", GH_ParamAccess.list);
             //pm.AddGeometryParameter("Volatile Geometry", "vG", "(phenotype) Connect geometry that is dependent on sliders here", GH_ParamAccess.item);
             pm.AddGeometryParameter("Geometry", "G", "(phenotype) Connect geometry here - currently only meshes", GH_ParamAccess.list);
+            pm.AddIntegerParameter("PopSize", "P", "Number of instances to display e.g. 12 = 4x3 viewports", GH_ParamAccess.item, 12);
 
             pm[0].WireDisplay = GH_ParamWireDisplay.faint;
             pm[1].WireDisplay = GH_ParamWireDisplay.faint;
-            pm[1].Optional = true;
+            //pm[1].Optional = true;
 
         }
 
@@ -72,6 +73,8 @@ namespace DesignSpace
                 persGeo.Clear();
                 sliderValues.Clear();
 
+                DA.GetData("PopSize", ref popSize);
+
                 // Collect the sliders up (just one at the moment)
                 foreach (IGH_Param param in this.Params.Input[0].Sources)
                 {
@@ -82,39 +85,23 @@ namespace DesignSpace
                     } 
                 }
 
+
                 // Now set the value list
                 // TODO: Replace with a tree, not just the first slider!
                 // Thanks to Dimitrie A. Stefanescu for making Speckle open which has helped greatly here.
-                if (sliders != null)
+
+
+                for (int i = 0; i < sliders.Count; i++)
                 {
-                    if (sliders[0].Slider.Type == Grasshopper.GUI.Base.GH_SliderAccuracy.Integer)
-                    {
-                        int min = (int)sliders[0].Slider.Minimum;
-                        int max = (int)sliders[0].Slider.Maximum;
+                    double min = (double)sliders[i].Slider.Minimum;
+                    double max = (double)sliders[i].Slider.Maximum;
+                    
+                    // Note we use divisions-1 because we have inclusive slider bounds
+                    double increment = (max - min) / ((double)popSize-1);
 
-                        //double increment = (max - min) / 11;
-
-                        for (int j = min; j <= max; j++)
-                        {
-                            sliderValues.Add(j);
-                        }
-                    }
-
-                    else if (sliders[0].Slider.Type == Grasshopper.GUI.Base.GH_SliderAccuracy.Float)
-                    {
-                        double min = (double)sliders[0].Slider.Minimum;
-                        double max = (double)sliders[0].Slider.Maximum;
-
-                        double increment = (max - min) / 11;
-
-                        for (double j = min; j <= max; j += increment)
-                            sliderValues.Add(Math.Round(j, 2));
-
-                    }
+                    for (int j = 0; j < popSize; j++)
+                        sliderValues.Add(j*increment + min); 
                 }
-
-
-
             }
 
             // So if GO = true...
@@ -122,17 +109,18 @@ namespace DesignSpace
             {
                 // Get the slider values.
                 // TODO: Include more than one slider.
-                if(counter<sliderValues.Count)
+                if(counter<popSize)
+                {
+                    //for (int i = 0; i < sliders.Count; i++)
                     sliders[0].Slider.Value = (decimal)sliderValues[counter];
+                }
 
-
+                    
                 // First things first...
+                // We have to do the else stuff AFTER the slider has moved and the component is expired (tricky).
                 if(counter==0)
                 {
-                    
                 }
-                
-                // We have to do this stuff AFTER the slider has moved and the component is expired (tricky).
                 else
                 { 
                     // Collect the object at the current instance
@@ -162,11 +150,12 @@ namespace DesignSpace
                 // If we reach a limit, then stop and launch the window
                 if (counter == sliderValues.Count)
                 {
-                    GO = false;
-
+                    
                     // Instantiate the window and export the geometry to WPF3D
                     myMainWindow = new DesignSpaceWindow(GetPersMeshList());
                     myMainWindow.Show();
+
+                    GO = false;
 
                     // Expire this component
                     this.ExpireSolution(true);
