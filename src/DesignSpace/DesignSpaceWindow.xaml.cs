@@ -28,6 +28,7 @@ namespace DesignSpace
         {
             
             this.InitializeComponent();
+            this.Topmost = true;
 
             myUserControls = new List<UserControl1>();
 
@@ -39,8 +40,6 @@ namespace DesignSpace
                 }
             }
 
-
-            
             // Create the Grid
             myGrid = new Grid();
             MakeGrid(4, 3);

@@ -40,7 +40,7 @@ namespace DesignSpace
         private void Create3DViewPort(Mesh myRhinoMesh)
         {
             var hVp3D = new HelixViewport3D();
-            hVp3D.Background = Brushes.LightGray;
+            //hVp3D.Background = Brushes.LightGray;
 
             hVp3D.ShowFrameRate = true;
             hVp3D.ViewCubeOpacity = 0.2;
